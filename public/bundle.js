@@ -64,10 +64,6 @@
 	
 	var _login2 = _interopRequireDefault(_login);
 	
-	var _get = __webpack_require__(273);
-	
-	var _get2 = _interopRequireDefault(_get);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Root = function Root(_ref) {
@@ -77,22 +73,22 @@
 	    { store: store },
 	    _react2.default.createElement(
 	      _reactRouter.Router,
-	      { history: _reactRouter.browserHistory },
-	      _react2.default.createElement(_reactRouter.Route, { path: '/tireless-tracker/', component: _login2.default })
+	      { history: _reactRouter.hashHistory },
+	      _react2.default.createElement(_reactRouter.Route, { path: '/', component: _login2.default })
 	    )
 	  );
 	};
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  var store = void 0;
-	  window.get = _get2.default;
+	
 	  if (sessionStorage.jwt) {
 	    var preloadedState = { session: { currentUser: sessionStorage.jwt } };
 	    store = (0, _store2.default)(preloadedState);
 	  } else {
 	    store = (0, _store2.default)();
 	  }
-	
+	  window.store = store;
 	  var root = document.getElementById('root');
 	  (0, _reactDom.render)(_react2.default.createElement(Root, { store: store }), root);
 	});
@@ -28143,8 +28139,9 @@
 	
 	function signup(user) {
 	  return function (dispatch) {
-	    return APIUtil.signup(user).then(function (user) {
-	      return dispatch(receiveCurrentUser(user));
+	    return APIUtil.signup(user).then(function (u) {
+	      debugger;
+	      return dispatch(receiveCurrentUser(u));
 	    }, function (err) {
 	      return dispatch(console.log(err.responseJSON));
 	    });
@@ -28172,18 +28169,34 @@
 	  value: true
 	});
 	var login = exports.login = function login(user) {
-	  return $.ajax({
+	  var opts = {
 	    method: 'POST',
-	    url: '/api/session',
-	    data: { auth: { user: user } }
+	    headers: new Headers({
+	      'Content-Type': 'application/json'
+	    }),
+	    body: JSON.stringify({ user: user })
+	  };
+	  var req = new Request('http://localhost:3000/session', opts);
+	  return fetch(req, opts).then(function (r) {
+	    return r.json();
+	  }).catch(function (e) {
+	    return e;
 	  });
 	};
 	
 	var signup = exports.signup = function signup(user) {
-	  return $.ajax({
+	  var opts = {
 	    method: 'POST',
-	    url: '/api/user',
-	    data: user
+	    headers: new Headers({
+	      'Content-Type': 'application/json'
+	    }),
+	    body: JSON.stringify({ user: user })
+	  };
+	  var req = new Request('http://localhost:3000/users', opts);
+	  return fetch(req, opts).then(function (r) {
+	    return r.json();
+	  }).catch(function (e) {
+	    return e;
 	  });
 	};
 
@@ -29114,8 +29127,8 @@
 	
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	  return {
-	    signup: function signup(user) {
-	      return dispatch((0, _session_actions.signup)(user));
+	    login: function login(user) {
+	      return dispatch((0, _session_actions.login)(user));
 	    }
 	  };
 	};
@@ -29147,7 +29160,7 @@
 	    value: function handleSubmit(e) {
 	      e.preventDefault();
 	      var user = this.state;
-	      this.props.processForm({ user: user });
+	      this.props.login(user);
 	    }
 	  }, {
 	    key: 'render',
@@ -29198,36 +29211,6 @@
 	}(_react.Component);
 	
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Login);
-
-/***/ },
-/* 273 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var get = function get(url) {
-	  return new Promise(function (resolve, reject) {
-	    var req = new XMLHttpRequest();
-	    req.open('GET', url);
-	
-	    req.onload = function () {
-	      if (req.status === 200) {
-	        resolve(req.response);
-	      } else {
-	        reject(Error(req.statusText));
-	      }
-	    };
-	    req.onerror = function () {
-	      reject(Error('Network Error'));
-	    };
-	    req.send();
-	  });
-	};
-	
-	exports.default = get;
 
 /***/ }
 /******/ ]);

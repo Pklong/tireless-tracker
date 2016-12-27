@@ -9,8 +9,11 @@ export const receiveCurrentUser = currentUser => ({
 
 export function signup(user) {
   return (dispatch) => {
-    return APIUtil.signup(user)
-      .then(user => dispatch(receiveCurrentUser(user)),
+      return APIUtil.signup(user)
+	  .then(u => {
+	      debugger
+	      return dispatch(receiveCurrentUser(u))
+	  },
             err => dispatch(console.log(err.responseJSON)));
   };
 }

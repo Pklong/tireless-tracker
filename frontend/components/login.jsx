@@ -9,7 +9,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  signup: user => dispatch(signup(user)),
+  login: user => dispatch(login(user)),
 });
 
 class Login extends Component {
@@ -26,7 +26,7 @@ class Login extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const user = this.state;
-    this.props.processForm({ user });
+    this.props.login(user);
   }
 
   render() {

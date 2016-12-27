@@ -2,7 +2,7 @@ module.exports = {
   context: __dirname,
   entry: './frontend/index.jsx',
   output: {
-    filename: './bundle.js',
+    filename: './public/bundle.js',
   },
   module: {
     loaders: [
